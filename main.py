@@ -37,7 +37,8 @@ def slides_split(slides):
 
 def handle(md, dst):
     copy(dst)
-    slides = codecs.open(md, 'r', 'utf-8').read()
+    with codecs.open(md, 'r', 'utf-8') as reader:
+	slides = reader.read()
     data = ''
     for css, item in slides_split(slides):
         if not item:
@@ -48,11 +49,10 @@ def handle(md, dst):
                 + '</div>'\
                 + '</section>\n'
     index_template = os.path.join(HERE, 'templates', 'index.html')
-    html = codecs.open(index_template, 'r', 'utf-8')
-    html = html.read().replace('<slide>', data)
-    f = codecs.open(os.path.join(dst, 'index.html'), 'w', 'utf-8')
-    f.write(html)
-    f.close()
+    with codecs.open(index_template, 'r', 'utf-8') as html:
+	html = html.read().replace('<slide>', data)
+    with codecs.open(os.path.join(dst, 'index.html'), 'w', 'utf-8') as f:
+	f.write(html)
 
 def main():
     '''Main entry point for the pydown CLI.'''
